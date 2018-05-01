@@ -1,5 +1,7 @@
 # Redis adapter for go-socket.io
 
+[![Build Status](https://travis-ci.org/logocomune/redisadapter.svg?branch=master)](https://travis-ci.org/logocomune/redisadapter)
+
 It's a redis adapter for [go-socket.io](https://github.com/googollee/go-socket.io).
 
 By running go-socket.io with this adapter, you can run multiple socket.io instances in different processes or servers that can all broadcast and emit events to and from each other.
@@ -10,7 +12,45 @@ By running go-socket.io with this adapter, you can run multiple socket.io instan
 go get "github.com/logocomune/redisadapter"
 ```
 
-Usage:
+
+## Configuration
+
+```go
+type Conf struct {
+	Host   string
+	Port   string
+	Prefix string
+	Logger Logger
+}
+```
+- Host: host to connect to redis on (127.0.0.1)
+- Port: port to connect to redis on (6379)
+- Prefix: prefix for keys on publish/subscribe events (redis_socket_io)
+- Logger: logger (redisadapter.NewNoLog())
+   - redisadapter.NewStdLog(): enable all logs
+   - redisadapter.NewNoLog(): disable all logs
+   - logrus.New(): it's compatible with redisadapter.Logger interface
+    
+### Logger interface
+```go
+type Logger interface {
+	Debugf(format string, args ...interface{})
+	Warnf(format string, args ...interface{})
+	Errorf(format string, args ...interface{})
+
+	Debug(args ...interface{})
+	Warn(args ...interface{})
+	Error(args ...interface{})
+
+	Debugln(args ...interface{})
+	Warnln(args ...interface{})
+	Errorln(args ...interface{})
+}
+
+```
+
+
+## Usage
 
 ```go
 package main
@@ -57,43 +97,6 @@ func main() {
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
 ```
-
-### Configuration
-
-```go
-type Conf struct {
-	Host   string
-	Port   string
-	Prefix string
-	Logger Logger
-}
-```
-- Host: host to connect to redis on (127.0.0.1)
-- Port: port to connect to redis on (6379)
-- Prefix: prefix for keys on publish/subscribe events (redis_socket_io)
-- Logger: logger (redisadapter.NewNoLog())
-   - redisadapter.NewStdLog(): enable all logs
-   - redisadapter.NewNoLog(): disable all logs
-   - logrus.New(): it's compatible with redisadapter.Logger interface
-    
-### Logger interface
-```go
-type Logger interface {
-	Debugf(format string, args ...interface{})
-	Warnf(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
-
-	Debug(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
-
-	Debugln(args ...interface{})
-	Warnln(args ...interface{})
-	Errorln(args ...interface{})
-}
-
-```
-
 ## Inspired and influenced
 
 - https://github.com/satyakb/go-socket.io-redis
